@@ -1,6 +1,8 @@
+//titulo del juego
 $(document).ready(function()
 {
   setTimeout(animateTitle,4000);
+  generarDulces()
 });
 
 function animateTitle()
@@ -24,4 +26,31 @@ function animateTitle()
       animateTitle();
     });
   });
+}
+
+// generar dulces aleatorimente 
+var DULCES_POR_COL = 6;
+function generarSrc(){
+    var numero = Math.floor((Math.random()*(4 - 1)) + 1);
+    var ruta = "image/"+numero+".png";
+    return ruta;
+}
+
+function generarDulces(){
+
+    for (var i = 0; i < 7; i++) {
+      
+      for (var j = 0 ; j < DULCES_POR_COL; j++) {
+        var imgElement = $("<img>", {
+          'src': generarSrc()
+          })
+        $(".col-"+(i+1)).append(imgElement)
+      }
+    }
+}
+
+function generarTimer (tiempo, callback){
+  return function(){
+    setTimeout(callback, tiempo)
+  }
 }
