@@ -58,7 +58,8 @@ function pintarTablero(){
       var ruta = "image/"+numero+".png";
       var imgElement = $("<img>", {
           'src': ruta,
-          'style': 'width: 97px; height: 97px;'
+          'id': 'caramelo-'+i+'-'+j,
+          'style': 'width: 97px; height: 97px'
           })
       $(".col-"+(i+1)).append(imgElement)
     }
@@ -81,18 +82,18 @@ function encontrarAciertos(){
             columna: i,
             posFinal: j - 1,
             longitud: contador + 1,
-          })
+          });
         }
         contador = 0;
       }
     }
-    if (contador >= 2) {
-      aciertos.push({
-        columna: i,
-        posFinal: 6,
-        longitud: contador + 1,
-      })
-    }
+      if (contador >= 2) {
+        aciertos.push({
+          columna: i,
+          posFinal: 6,
+          longitud: contador + 1,
+        })
+      }
   }
   for (var j = 0; j < 7; j++){
     var contador = 0;
@@ -122,5 +123,16 @@ function encontrarAciertos(){
   return aciertos;
 }
 
+function pintarNuevo(){
+  var nuevoTablero = [];
+  for (var i = 0; i < 7; i++) {
+    nuevoTablero[i] = [];
+    for (var j = 6; j >= 0; j--) {
+      if (true) {
+        nuevoTablero[i].unshift(tablero[i][j])
+      }
+    }
+  }
+}
 
 
