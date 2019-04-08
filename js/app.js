@@ -1,13 +1,24 @@
-
 $(document).ready(function()
 {
   setTimeout(animateTitle,4000);
   generarTablero();
   pintarTablero();
-  encontrarAciertos();
-  console.log(tablero);
-  console.log(encontrarAciertos())
+  procesarCiclo();
 });
+
+function procesarCiclo(){
+  var aciertos = encontrarAciertos();
+  if(aciertos.length === 0){
+    return
+  }
+  pintarAciertos(aciertos);
+  setTimeout(function(){
+    tablero = renovarTablero(aciertos);
+    pintarTablero();
+    procesarCiclo();
+  }, 3500)
+}
+
 
 // Animar titulo
 function animateTitle()
@@ -53,6 +64,7 @@ function generarTablero(){
 
 function pintarTablero(){
   for (var i = 0; i < 7; i++) {
+    $(".col-"+(i+1)).empty()
     for (var j = 0 ; j < 7; j++) {
       var numero = tablero[i][j];
       var ruta = "image/"+numero+".png";
@@ -78,21 +90,13 @@ function encontrarAciertos(){
       }
       else {
         if (contador >= 2) {
-          aciertos.push({
-            columna: i,
-            posFinal: j - 1,
-            longitud: contador + 1,
-          });
+          agregarAciertos(null, i, j - 1, contador + 1, aciertos)
         }
         contador = 0;
       }
     }
       if (contador >= 2) {
-        aciertos.push({
-          columna: i,
-          posFinal: 6,
-          longitud: contador + 1,
-        })
+        agregarAciertos(null, i, 6, contador + 1, aciertos)
       }
   }
   for (var j = 0; j < 7; j++){
@@ -103,36 +107,76 @@ function encontrarAciertos(){
       }
       else {
         if (contador >= 2) {
-          aciertos.push({
-            fila: j,
-            posFinal: i - 1,
-            longitud: contador + 1,
-          })
+          agregarAciertos(j, null, i - 1, contador + 1, aciertos)
         }
         contador = 0;
       }
     }
     if (contador >= 2) {
-      aciertos.push({
-        fila: j,
-        posFinal: 6,
-        longitud: contador + 1,
-      })
+       agregarAciertos(j, null, 6, contador + 1, aciertos)
     }
   }
   return aciertos;
 }
 
-function pintarNuevo(){
-  var nuevoTablero = [];
-  for (var i = 0; i < 7; i++) {
-    nuevoTablero[i] = [];
-    for (var j = 6; j >= 0; j--) {
-      if (true) {
-        nuevoTablero[i].unshift(tablero[i][j])
-      }
+
+function agregarAciertos(fila, columna, posFinal, longitud, aciertos){
+  for(var i=0; i<longitud; i++){
+    var x
+    var y
+    if(fila !== null){
+      y = fila
+      x = posFinal - i
+    }else{
+      x = columna
+      y = posFinal - i
     }
+    aciertos.push([x, y])
   }
 }
 
+/* Pinta en el tablero los caramelos que son parte de un acierto 
+parametros: aciertos (lista)
+returna: null
 
+*/
+function pintarAciertos(aciertos){
+  console.log(aciertos, aciertos.length)
+  for (var i = 0; i < aciertos.length; i++) {
+    aciertos[i]
+    var x = aciertos[i][0]
+    var y = aciertos[i][1]
+    $("#caramelo-"+x+"-"+y).fadeOut(3000, 'linear');
+  }  
+}
+
+
+
+/* Filtra el tablero quitando los aciertos y agrega nuevos caramelos en el tope de cada fila
+parametros: aciertos(lista)
+retorna: el nuevo estado del tablero. */
+
+function renovarTablero(aciertos){
+  var nuevoTablero = [];
+  for (var i= 0; i < 7; i++) {
+    var columnaFiltrada = []
+    for(var j = 0; j < 7; j++){
+      var encontrado = false
+      for (var k = 0; k < aciertos.length; k++) {
+        var acierto = aciertos[k]
+        if (acierto[0] === i & acierto[1] === j) {
+          encontrado = true;
+        }
+      }
+      if (encontrado === false) {
+        columnaFiltrada.push(tablero[i][j])
+      }
+    }
+    var diff = 7 - columnaFiltrada.length
+    for(var j = 0; j < diff; j++){
+      columnaFiltrada.unshift(genCaramelo())
+    }
+    nuevoTablero.push(columnaFiltrada);
+  }
+  return nuevoTablero;
+}
