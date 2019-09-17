@@ -3,18 +3,32 @@ $(document).ready(function()
   setTimeout(animateTitle,4000);
   generarTablero();
   pintarTablero();
-  procesarCiclo();
+  //procesarCiclo();
 });
 
+
+// Maneja el boton de inicio
+// Inicia el contador 
+// Cambia el texto
+// Inicia el bucle del juego
+$(".btn-reinicio").click(function() {
+  procesarCiclo();
+  $(".btn-reinicio").html('Reiniciar');
+});
+
+// Encuentra aciertos y renueva el tablero
 function procesarCiclo(){
   var aciertos = encontrarAciertos();
   if(aciertos.length === 0){
     return
   }
+  
   pintarAciertos(aciertos);
   setTimeout(function(){
     tablero = renovarTablero(aciertos);
     pintarTablero();
+    puntaje = puntaje + aciertos.length;
+    $("#score-text").html(puntaje);
     procesarCiclo();
   }, 3500)
 }
@@ -47,7 +61,9 @@ function animateTitle()
 // generar dulces aleatorimente 
 var DULCES_POR_COL = 7;
 var tablero = [];
+var puntaje = 0;
 
+// retorna un numero aleatorio entre 1 y 4
 function genCaramelo() {
   var numero = Math.floor((Math.random()*(5 - 1)) + 1);
   return numero;
@@ -95,9 +111,9 @@ function encontrarAciertos(){
         contador = 0;
       }
     }
-      if (contador >= 2) {
-        agregarAciertos(null, i, 6, contador + 1, aciertos)
-      }
+    if (contador >= 2) {
+      agregarAciertos(null, i, 6, contador + 1, aciertos)
+    }
   }
   for (var j = 0; j < 7; j++){
     var contador = 0;
@@ -116,6 +132,7 @@ function encontrarAciertos(){
        agregarAciertos(j, null, 6, contador + 1, aciertos)
     }
   }
+  //console.log(aciertos)
   return aciertos;
 }
 
@@ -141,9 +158,8 @@ returna: null
 
 */
 function pintarAciertos(aciertos){
-  console.log(aciertos, aciertos.length)
+  //console.log(aciertos, aciertos.length)
   for (var i = 0; i < aciertos.length; i++) {
-    aciertos[i]
     var x = aciertos[i][0]
     var y = aciertos[i][1]
     $("#caramelo-"+x+"-"+y).fadeOut(3000, 'linear');
