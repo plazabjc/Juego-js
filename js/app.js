@@ -12,7 +12,9 @@ $(document).ready(function()
 // Cambia el texto
 // Inicia el bucle del juego
 $(".btn-reinicio").click(function() {
+  setTimeout(esconderTablero,120000);
   procesarCiclo();
+  setInterval(contarTiempo, 1000);
   $(".btn-reinicio").html('Reiniciar');
 });
 
@@ -62,6 +64,7 @@ function animateTitle()
 var DULCES_POR_COL = 7;
 var tablero = [];
 var puntaje = 0;
+var tiempoRestante = 120;
 
 // retorna un numero aleatorio entre 1 y 4
 function genCaramelo() {
@@ -195,4 +198,47 @@ function renovarTablero(aciertos){
     nuevoTablero.push(columnaFiltrada);
   }
   return nuevoTablero;
+}
+
+
+//Esconde el tablero y el panel de tiempo
+
+function esconderTablero(){
+  //$('.panel-tablero').fadeOut(1000);
+  $('.panel-tablero').animate({
+    width: 0,
+    height: 0,
+    opacity: 0,
+  }, 1000);
+
+  $('.panel-score').animate({
+    width: '100%'
+  }, 1000, crearTitulo);
+   $('.time').fadeOut(1000);
+
+}
+
+function crearTitulo(){
+  var titleElement = $("<h2>", {
+    'class':'main-titulo',
+    'style':'text-align: center'
+  })
+  titleElement.html('Juego Terminado');
+  $('.panel-score').prepend(titleElement)
+}
+
+
+// Cuenta el tiempo y actualiza el reloj
+
+function contarTiempo(){
+  
+  tiempoRestante = tiempoRestante - 1;
+  var minutos = Math.floor(tiempoRestante/60)
+  var segundos = tiempoRestante%60
+  if (segundos < 10 ) {
+    segundos = '0' + segundos
+  }
+  $("#timer").html(minutos + ':' + segundos);
+  
+
 }
