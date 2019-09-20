@@ -1,3 +1,10 @@
+var DULCES_POR_COL = 7;
+var tablero = [];
+var puntaje = 0;
+var tiempoRestante = 120;
+var posicionMouseDown = null;
+
+
 $(document).ready(function()
 {
   setTimeout(animateTitle,4000);
@@ -11,6 +18,8 @@ $(document).ready(function()
 // Inicia el contador 
 // Cambia el texto
 // Inicia el bucle del juego
+
+
 $(".btn-reinicio").click(function() {
   setTimeout(esconderTablero,120000);
   procesarCiclo();
@@ -61,10 +70,6 @@ function animateTitle()
 }
 
 // generar dulces aleatorimente 
-var DULCES_POR_COL = 7;
-var tablero = [];
-var puntaje = 0;
-var tiempoRestante = 120;
 
 // retorna un numero aleatorio entre 1 y 4
 function genCaramelo() {
@@ -88,14 +93,54 @@ function pintarTablero(){
       var numero = tablero[i][j];
       var ruta = "image/"+numero+".png";
       var imgElement = $("<img>", {
+          'class': 'caramelo',
           'src': ruta,
+          'data-x': i,
+          'data-y': j,
           'id': 'caramelo-'+i+'-'+j,
-          'style': 'width: 97px; height: 97px'
+          'style': 'width: 97px; height: 97px;'
           })
       $(".col-"+(i+1)).append(imgElement)
     }
   }
+
+  $(".caramelo").mousedown(function(){
+    var self = $(this);
+    $(this).on('dragstart', function(event) {
+      event.preventDefault();
+    });
+    var datax = $(this).data("x");
+    var datay = $(this).data("y");
+    posicionMouseDown = [datax, datay];
+  }); 
+
+  $(".caramelo").mouseenter(function(){
+    var xe = $(this).data("x");
+    var ye = $(this).data("y");
+
+    if (posicionMouseDown !== null) {
+      var xd = posicionMouseDown[0];
+      var yd = posicionMouseDown[1];
+      if ((xd-1 === xe && yd === ye) || (xd + 1 === xe && yd === ye) || (xd === xe && yd - 1 === ye) || (xd === xe && yd + 1 === ye)) {
+        var anchoColumna = $('.col-1').width()
+        var deltaX = (xe - xd)*anchoColumna + 'px'
+        var deltaY = (ye - yd)*97 + 'px'
+
+        $('#caramelo-' + xd + '-' + yd).css({ transform: 'translate('+ deltaX + ',' + deltaY +')' });
+      }
+      else{
+        console.log('Movimiento invalido ')
+      }
+    }
+  })
+
+  //Función que posiciona el elemento en la ubicación en que el mouse se levanta
 }
+
+
+$("body").mouseup(function(event){
+  posicionMouseDown = null;
+});
 
 //Encontrar aciertos
 
@@ -242,3 +287,5 @@ function contarTiempo(){
   
 
 }
+
+//hacer click, arrastrar, animar, soltar y encontrar coincidencias
