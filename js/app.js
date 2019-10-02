@@ -122,19 +122,52 @@ function pintarTablero(){
       var xd = posicionMouseDown[0];
       var yd = posicionMouseDown[1];
       if ((xd-1 === xe && yd === ye) || (xd + 1 === xe && yd === ye) || (xd === xe && yd - 1 === ye) || (xd === xe && yd + 1 === ye)) {
-        var anchoColumna = $('.col-1').width()
-        var deltaX = (xe - xd)*anchoColumna + 'px'
-        var deltaY = (ye - yd)*97 + 'px'
+        
+        var auxiliar = tablero[xd][yd];
+        tablero[xd][yd] = tablero[xe][ye];
+        tablero[xe][ye] = auxiliar;
+        var aciertos = encontrarAciertos()
+        if (aciertos.length !== 0) {
+          var anchoColumna = $('.col-1').width()
+          var deltaX = (xe - xd)*anchoColumna
+          var deltaY = (ye - yd)*97
 
-        $('#caramelo-' + xd + '-' + yd).css({ transform: 'translate('+ deltaX + ',' + deltaY +')' });
-      }
-      else{
-        console.log('Movimiento invalido ')
+          var caramelo1 = $('#caramelo-' + xd + '-' + yd);
+          var caramelo2 = $('#caramelo-' + xe + '-' + ye);
+
+          //caramelo1.css({ transform: 'translate('+ deltaX + 'px ,' + deltaY +'px)' });
+          //caramelo2.css({ transform: 'translate('+ (-1*deltaX) + 'px ,' + (-1*deltaY) +'px)' });
+
+          swapNodes(caramelo1.get(0), caramelo2.get(0))
+
+          caramelo1.removeAttr("id");
+          caramelo2.removeAttr("id");
+
+          caramelo1.attr("id", 'caramelo-' + xe + '-' + ye);
+          caramelo2.attr("id", 'caramelo-' + xd + '-' + yd);
+
+
+          procesarCiclo()
+        }
+        else {
+          var auxiliar = tablero[xd][yd];
+          tablero[xd][yd] = tablero[xe][ye];
+          tablero[xe][ye] = auxiliar;
+        }
       }
     }
   })
+  
 
   //Función que posiciona el elemento en la ubicación en que el mouse se levanta
+}
+
+// intercambia dos nodos encontrado en: https://stackoverflow.com/questions/698301/is-there-a-native-jquery-function-to-switch-elements
+function swapNodes(a, b) {
+    var aparent = a.parentNode;
+    var asibling = a.nextSibling === b ? a : a.nextSibling;
+    b.parentNode.insertBefore(a, b);
+    aparent.insertBefore(b, asibling);
 }
 
 
@@ -142,7 +175,7 @@ $("body").mouseup(function(event){
   posicionMouseDown = null;
 });
 
-//Encontrar aciertos
+// Busca en el tablero los aciertos, si no encuentra aciertos retorna un arreglo vacio sino retorna un arreglo de aciertos
 
 function encontrarAciertos(){
   var aciertos = [];
