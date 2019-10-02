@@ -1,6 +1,7 @@
 var DULCES_POR_COL = 7;
 var tablero = [];
 var puntaje = 0;
+var movimientos = 0;
 var tiempoRestante = 120;
 var posicionMouseDown = null;
 
@@ -146,7 +147,8 @@ function pintarTablero(){
           caramelo1.attr("id", 'caramelo-' + xe + '-' + ye);
           caramelo2.attr("id", 'caramelo-' + xd + '-' + yd);
 
-
+          movimientos = movimientos + 1;
+          $("#movimientos-text").html(movimientos);
           procesarCiclo()
         }
         else {
