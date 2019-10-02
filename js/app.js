@@ -5,6 +5,8 @@ var movimientos = 0;
 var tiempoRestante = 120;
 var posicionMouseDown = null;
 var juegoIniciado = false;
+var juegoBloqueado = true;
+var forzarDetencion = false;
 
 
 $(document).ready(function()
@@ -36,11 +38,21 @@ $(".btn-reinicio").click(function() {
 
 // Encuentra aciertos y renueva el tablero
 function procesarCiclo(){
+  if (forzarDetencion === true)  {
+    $("html").css({ cursor: "default"});
+    return;
+  }
   var aciertos = encontrarAciertos();
+  
   if(aciertos.length === 0){
+    juegoBloqueado = false;
+    $("html").css({ cursor: "default"});
     return
   }
   
+  juegoBloqueado = true;
+  $("html").css({ cursor: "progress"});
+
   pintarAciertos(aciertos);
   setTimeout(function(){
     tablero = renovarTablero(aciertos);
@@ -112,6 +124,9 @@ function pintarTablero(){
   }
 
   $(".caramelo").mousedown(function(){
+    if (juegoBloqueado === true) {
+      return
+    }
     var self = $(this);
     $(this).on('dragstart', function(event) {
       event.preventDefault();
@@ -291,6 +306,7 @@ function renovarTablero(aciertos){
 
 function esconderTablero(){
   //$('.panel-tablero').fadeOut(1000);
+  forzarDetencion = true;
   $('.panel-tablero').animate({
     width: 0,
     height: 0,
