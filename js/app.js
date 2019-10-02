@@ -4,6 +4,7 @@ var puntaje = 0;
 var movimientos = 0;
 var tiempoRestante = 120;
 var posicionMouseDown = null;
+var juegoIniciado = false;
 
 
 $(document).ready(function()
@@ -22,10 +23,15 @@ $(document).ready(function()
 
 
 $(".btn-reinicio").click(function() {
-  setTimeout(esconderTablero,120000);
-  procesarCiclo();
-  setInterval(contarTiempo, 1000);
-  $(".btn-reinicio").html('Reiniciar');
+  if(juegoIniciado === false){
+    juegoIniciado = true;
+    setTimeout(esconderTablero,120000);
+    procesarCiclo();
+    setInterval(contarTiempo, 1000);
+    $(".btn-reinicio").html('Reiniciar');
+  }else{
+    location.reload();
+  }
 });
 
 // Encuentra aciertos y renueva el tablero
